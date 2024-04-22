@@ -38072,7 +38072,7 @@ var decompress = (input, output, opts) => {
 var decompress$1 = /*@__PURE__*/getDefaultExportFromCjs(decompress);
 
 const exec = util$b.promisify(require("node:child_process").exec);
-const WORKING_DIR = process.cwd() + "/og-starter";
+const WORKING_DIR = process.cwd();
 const OPEN_MP_RELEASE = "v1.2.0.2670";
 const SAMP_NODE_RELEASE = "2.1.0";
 async function downloadGithubRelease(owner, repo, releaseTag, assetName, outputDirPath) {
@@ -38093,7 +38093,7 @@ async function downloadGithubRelease(owner, repo, releaseTag, assetName, outputD
 }
 async function cloneStarterRepo() {
     const starterRepoUrl = "https://github.com/vladgitx/og-starter";
-    await exec(`git clone ${starterRepoUrl} ${WORKING_DIR}`);
+    await exec(`git clone ${starterRepoUrl} .`);
     await rimraf(`${WORKING_DIR}/.git`);
     await exec(`cd ${WORKING_DIR} && git init && git add . && git commit -m "Initial commit"`);
 }
