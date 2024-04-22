@@ -49,7 +49,7 @@ async function downloadServerFiles() {
 
     const targetDir = WORKING_DIR + "/dist"
 
-    await decompress(assetPath, targetDir, { strip: 1 })
+    await decompress(assetPath, targetDir, { strip: 1 }) // Strip the root Server/ directory
     await rimraf(assetPath)
 
     // Deleting useless files
