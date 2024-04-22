@@ -1,4 +1,5 @@
 #! /usr/bin/env node
 'use strict';
 
-console.log("Hello World!");
+const path = process.cwd();
+console.log("Current path: ", path);
