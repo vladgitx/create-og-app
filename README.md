@@ -1,26 +1,19 @@
-# Node Starter
+# Open Godfather CLI
 
-Start a Node.js project with Typescript, Rollup, ESLint, and Prettier.
+CLI for kickstarting your Open Godfather project. It downloads the server files, it builds the .pwn entry point, and more.
 
-## Installation
+## Usage
 
-Clone the repository and install the dependencies:
+The command below starts a project in your current directory:
 
 ```bash
-git clone https://github.com/vladgitx/node-starter
-cd node-starter
-npm install
+npx github:vladgitx/og-cli
 ```
-Then start working in `src/index.ts`.
 
-## Scripts
+## How does it work?
 
-`npm run start` - Run the code
+First, it clones the [starter repository](https://github.com/vladgitx/og-starter), which is built on Typescript and Rollup. It also installs all the npm dependencies.
 
-`npm run build` - Bundle the code
+Then, it downloads the open.mp server files and the samp-node plugin, modifying the config.json accordingly.
 
-`npm run format` - Format the code
-
-`npm run lint` - Lint the code
-
-`npm run pre-commit` - Build, format, and lint the code
+Last, the main.pwn file from this package is compiled to your server files.
