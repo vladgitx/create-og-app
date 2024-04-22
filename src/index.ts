@@ -1,3 +1,5 @@
 #! /usr/bin/env node
 
-console.log("Hello World!")
+const path = process.cwd()
+
+console.log("Current path: ", path)
