@@ -12,7 +12,8 @@
     "format": "prettier --write --log-level silent 'src/**/*.{js,jsx,ts,tsx,mjs,json}'",
     "lint": "npx eslint src/**/*.ts",
     "build": "rollup -c",
-    "pre-commit": "npm run format && npm run lint && npm run build"
+    "pre-commit": "npm run format && npm run lint && npm run build",
+    "prepare": "npm run build"
   },
   "keywords": [],
   "author": "",
