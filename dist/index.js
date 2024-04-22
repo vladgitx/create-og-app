@@ -38093,7 +38093,7 @@ async function downloadGithubRelease(owner, repo, releaseTag, assetName, outputD
 }
 async function cloneStarterRepo() {
     const starterRepoUrl = "https://github.com/vladgitx/og-starter";
-    await exec(`git clone ${starterRepoUrl} .`);
+    await exec(`git clone ${starterRepoUrl} ${WORKING_DIR}`);
     await rimraf(`${WORKING_DIR}/.git`);
     await exec(`cd ${WORKING_DIR} && git init && git add . && git commit -m "Initial commit"`);
 }
