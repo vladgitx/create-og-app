@@ -76,8 +76,8 @@ async function downloadStreamer() {
         targetDir,
     )
 
-    await decompress(assetPath, targetDir + "/plugins", {
-        filter: (file) => file.path === "streamer.dll",
+    await decompress(assetPath, targetDir, {
+        filter: (file) => file.path === "plugins/streamer.dll",
     })
 
     await rimraf(assetPath)
@@ -121,10 +121,10 @@ async function main() {
     console.log(`Downloading the open.mp ${OPEN_MP_RELEASE} server files...`)
     await downloadServerFiles()
 
-    console.log(`Downloading samp-node plugin ${SAMP_NODE_RELEASE}...`)
+    console.log(`Downloading samp-node ${SAMP_NODE_RELEASE}...`)
     await downloadSampNode()
 
-    console.log(`Downloading Streamer plugin ${STREAMER_RELEASE}...`)
+    console.log(`Downloading Streamer ${STREAMER_RELEASE}...`)
     await downloadStreamer()
 
     console.log("Building the pawn file...")
