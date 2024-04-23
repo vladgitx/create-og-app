@@ -1,40 +1,19 @@
 #! /usr/bin/env node
 
 import { rimraf } from "rimraf"
-import axios from "axios"
-import util from "node:util"
-import path from "node:path"
+import util from "util"
+import path from "path"
 import fs from "fs"
 import decompress from "decompress"
-const exec = util.promisify(require("node:child_process").exec)
+import { writePluginInConfigFile, downloadGithubRelease } from "./utils"
 
 const WORKING_DIR = process.cwd()
 
 const OPEN_MP_RELEASE = "v1.2.0.2670"
 const SAMP_NODE_RELEASE = "2.1.0"
+const STREAMER_RELEASE = "v2.9.6"
 
-async function downloadGithubRelease(owner: string, repo: string, releaseTag: string, assetName: string, outputDirPath: string) {
-    const releaseUrl = `https://api.github.com/repos/${owner}/${repo}/releases/tags/${releaseTag}`
-    const asset = (await axios.get(releaseUrl)).data.assets.find((a: any) => a?.name === assetName)
-
-    if (!asset) {
-        throw new Error(`Asset ${assetName} not found in release ${releaseTag} from ${owner}/${repo}`)
-    }
-
-    const responseStream = await axios.get(asset.browser_download_url, { responseType: "stream" })
-
-    const filePath = path.join(outputDirPath, assetName)
-    const fileStream = fs.createWriteStream(filePath)
-
-    responseStream.data.pipe(fileStream)
-
-    await new Promise((resolve, reject) => {
-        fileStream.on("finish", resolve)
-        fileStream.on("error", reject)
-    })
-
-    return filePath
-}
+const exec = util.promisify(require("node:child_process").exec)
 
 async function cloneStarterRepo() {
     const starterRepoUrl = "https://github.com/vladgitx/og-starter"
@@ -58,7 +37,6 @@ async function downloadServerFiles() {
 
 async function downloadSampNode() {
     const targetDir = WORKING_DIR + "/dist"
-
     const assetPath = await downloadGithubRelease("AmyrAhmady", "samp-node", SAMP_NODE_RELEASE, "samp-node-windows.zip", targetDir)
 
     await decompress(assetPath, targetDir, {
@@ -85,20 +63,25 @@ async function downloadSampNode() {
         )
     })
 
-    await new Promise((resolve) => {
-        const configFilePath = targetDir + "/config.json"
+    await writePluginInConfigFile(targetDir, "samp-node")
+}
 
-        fs.readFile(configFilePath, "utf8", (err, data) => {
-            if (err) {
-                throw err
-            }
+async function downloadStreamer() {
+    const targetDir = WORKING_DIR + "/dist"
+    const assetPath = await downloadGithubRelease(
+        "samp-incognito",
+        "samp-streamer-plugin",
+        STREAMER_RELEASE,
+        "samp-streamer-plugin-2.9.6.zip",
+        targetDir,
+    )
 
-            const config = JSON.parse(data)
-            config.pawn.legacy_plugins = ["samp-node"]
-
-            fs.writeFile(configFilePath, JSON.stringify(config, null, 4), resolve)
-        })
+    await decompress(assetPath, targetDir + "/plugins", {
+        filter: (file) => file.path === "streamer.dll",
     })
+
+    await rimraf(assetPath)
+    await writePluginInConfigFile(targetDir, "streamer")
 }
 
 async function buildPawnFile() {
@@ -138,8 +121,11 @@ async function main() {
     console.log(`Downloading the open.mp ${OPEN_MP_RELEASE} server files...`)
     await downloadServerFiles()
 
-    console.log(`Downloading samp-node ${SAMP_NODE_RELEASE}...`)
+    console.log(`Downloading samp-node plugin ${SAMP_NODE_RELEASE}...`)
     await downloadSampNode()
+
+    console.log(`Downloading Streamer plugin ${STREAMER_RELEASE}...`)
+    await downloadStreamer()
 
     console.log("Building the pawn file...")
     await buildPawnFile()
